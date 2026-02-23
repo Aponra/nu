@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apon — Video</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* --- Video Page Styles --- */
+    .video-hero {
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
+
+    .video-hero__content {
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .video-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem 7rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .video-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .video-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .video-card__thumbnail {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .video-card__thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .video-card:hover .video-card__thumbnail img {
+      transform: scale(1.05);
+    }
+
+    .video-card__play {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .video-card:hover .video-card__play {
+      opacity: 1;
+    }
+
+    .video-card__play svg {
+      width: 64px;
+      height: 64px;
+      color: #fff;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .video-card__info {
+      padding: 1.5rem;
+    }
+
+    .video-card__cat {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .video-card__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+    }
+
+    .video-card__desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-top: 0.5rem;
+    }
+
+    .video-card__duration {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.75rem;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* --- Video Lightbox --- */
+    .video-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.95);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .video-lightbox--active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .video-lightbox__close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 2rem;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    .video-lightbox__close:hover {
+      opacity: 1;
+    }
+
+    .video-lightbox video {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: var(--radius-sm);
+    }
+
+    @media (max-width: 768px) {
+      .video-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem 4rem;
+      }
+
+      .video-hero {
+        padding: 7rem 1.5rem 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <a href="index.html" class="nav__logo">Apon</a>
+    <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+    </button>
+    <ul class="nav__links" id="navLinks">
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="video.html" style="color: var(--text);">Video</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <button class="nav__login-btn" id="loginBtn">Login</button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="video-hero">
+    <div class="video-hero__content">
+      <span class="section__label">Cinematography</span>
+      <h1 class="section__title">Video Work</h1>
+    </div>
+  </section>
+
+  <!-- Video Grid -->
+  <div class="video-grid">
+
+    <div class="video-card reveal">
+      <div class="video-card__thumbnail">
+        <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&q=80" alt="Cinematic landscape reel">
+        <div class="video-card__play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-card__duration">2:34</span>
+      </div>
+      <div class="video-card__info">
+        <span class="video-card__cat">Landscape</span>
+        <h3 class="video-card__title">Mountain Sunrise Reel</h3>
+        <p class="video-card__desc">A cinematic journey through dawn breaking over misty mountain peaks.</p>
+      </div>
+    </div>
+
+    <div class="video-card reveal">
+      <div class="video-card__thumbnail">
+        <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80" alt="Portrait session behind the scenes">
+        <div class="video-card__play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-card__duration">1:48</span>
+      </div>
+      <div class="video-card__info">
+        <span class="video-card__cat">Behind the Scenes</span>
+        <h3 class="video-card__title">Portrait Session BTS</h3>
+        <p class="video-card__desc">A behind-the-scenes look at a natural light portrait session in the city.</p>
+      </div>
+    </div>
+
+    <div class="video-card reveal">
+      <div class="video-card__thumbnail">
+        <img src="https://images.unsplash.com/photo-1518676590747-1e3dcf5a4e32?w=800&q=80" alt="Travel documentary">
+        <div class="video-card__play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-card__duration">4:12</span>
+      </div>
+      <div class="video-card__info">
+        <span class="video-card__cat">Travel</span>
+        <h3 class="video-card__title">Wanderlust — Short Film</h3>
+        <p class="video-card__desc">A short travel documentary exploring hidden gems across Southeast Asia.</p>
+      </div>
+    </div>
+
+    <div class="video-card reveal">
+      <div class="video-card__thumbnail">
+        <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=800&q=80" alt="Event highlights">
+        <div class="video-card__play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-card__duration">3:05</span>
+      </div>
+      <div class="video-card__info">
+        <span class="video-card__cat">Event</span>
+        <h3 class="video-card__title">Wedding Highlights</h3>
+        <p class="video-card__desc">Cinematic highlights from a beautiful outdoor wedding celebration.</p>
+      </div>
+    </div>
+
+    <div class="video-card reveal">
+      <div class="video-card__thumbnail">
+        <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80" alt="Nature timelapse">
+        <div class="video-card__play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-card__duration">1:20</span>
+      </div>
+      <div class="video-card__info">
+        <span class="video-card__cat">Timelapse</span>
+        <h3 class="video-card__title">Night Sky Timelapse</h3>
+        <p class="video-card__desc">Stars dancing across the night sky — captured over 6 hours in the wilderness.</p>
+      </div>
+    </div>
+
+    <div class="video-card reveal">
+      <div class="video-card__thumbnail">
+        <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80" alt="Urban storytelling">
+        <div class="video-card__play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span class="video-card__duration">2:50</span>
+      </div>
+      <div class="video-card__info">
+        <span class="video-card__cat">Urban</span>
+        <h3 class="video-card__title">City After Dark</h3>
+        <p class="video-card__desc">An atmospheric exploration of urban life when the sun goes down.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <a href="index.html" class="footer__logo">Apon</a>
+      <p>&copy; 2026 Apon. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-modal__box">
+      <button class="login-modal__close" id="loginModalClose">&times;</button>
+      <h2 class="login-modal__title">Welcome</h2>
+      <p class="login-modal__subtitle">Enter your details to continue</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="email" id="loginEmail" placeholder=" " required>
+          <label for="loginEmail">Email Address</label>
+        </div>
+        <div class="form-group">
+          <input type="tel" id="loginPhone" placeholder=" " required>
+          <label for="loginPhone">Phone Number</label>
+        </div>
+        <button type="submit" class="btn login-modal__submit">Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMFIdVBIxMYqpcLIhRCqGMOsS4sCMnJYk",
+      authDomain: "nu-9a547.firebaseapp.com",
+      projectId: "nu-9a547",
+      storageBucket: "nu-9a547.firebasestorage.app",
+      messagingSenderId: "419631564577",
+      appId: "1:419631564577:web:3c1ca84763bfb498e80e5c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('nav--scrolled', window.scrollY > 50);
+    });
+
+    // Mobile toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('nav__links--open');
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal--visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+
+  <!-- Visitor Login Logic -->
+  <script>
+  (function() {
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const loginModalClose = document.getElementById('loginModalClose');
+    const loginForm = document.getElementById('loginForm');
+
+    function checkLoggedIn() {
+      const visitor = localStorage.getItem('visitor');
+      if (visitor) {
+        const data = JSON.parse(visitor);
+        loginBtn.textContent = data.email;
+        loginBtn.title = data.email;
+      }
+    }
+
+    checkLoggedIn();
+
+    loginBtn.addEventListener('click', () => {
+      const visitor = localStorage.getItem('visitor');
+      if (visitor) return;
+      loginModal.classList.add('login-modal--active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    loginModalClose.addEventListener('click', () => {
+      loginModal.classList.remove('login-modal--active');
+      document.body.style.overflow = '';
+    });
+
+    loginModal.addEventListener('click', (e) => {
+      if (e.target === loginModal) {
+        loginModal.classList.remove('login-modal--active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const phone = document.getElementById('loginPhone').value.trim();
+
+      if (!email || !phone) return;
+
+      const submitBtn = loginForm.querySelector('button[type="submit"]');
+      submitBtn.textContent = 'Saving...';
+      submitBtn.disabled = true;
+
+      try {
+        await db.collection('visitors').add({
+          email: email,
+          phone: phone,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        localStorage.setItem('visitor', JSON.stringify({ email, phone }));
+        loginBtn.textContent = email;
+        loginBtn.title = email;
+        loginModal.classList.remove('login-modal--active');
+        document.body.style.overflow = '';
+      } catch (err) {
+        console.error('Error saving visitor:', err);
+        alert('Something went wrong. Please try again.');
+      } finally {
+        submitBtn.textContent = 'Continue';
+        submitBtn.disabled = false;
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -20,9 +20,11 @@
     </button>
     <ul class="nav__links" id="navLinks">
       <li><a href="#work">Work</a></li>
+      <li><a href="video.html">Video</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <button class="nav__login-btn" id="loginBtn">Login</button>
   </nav>
 
   <!-- Hero -->
@@ -227,6 +229,114 @@
     <img class="lightbox__img" src="" alt="">
   </div>
 
+  <!-- Login Modal -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-modal__box">
+      <button class="login-modal__close" id="loginModalClose">&times;</button>
+      <h2 class="login-modal__title">Welcome</h2>
+      <p class="login-modal__subtitle">Enter your details to continue</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <input type="email" id="loginEmail" placeholder=" " required>
+          <label for="loginEmail">Email Address</label>
+        </div>
+        <div class="form-group">
+          <input type="tel" id="loginPhone" placeholder=" " required>
+          <label for="loginPhone">Phone Number</label>
+        </div>
+        <button type="submit" class="btn login-modal__submit">Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMFIdVBIxMYqpcLIhRCqGMOsS4sCMnJYk",
+      authDomain: "nu-9a547.firebaseapp.com",
+      projectId: "nu-9a547",
+      storageBucket: "nu-9a547.firebasestorage.app",
+      messagingSenderId: "419631564577",
+      appId: "1:419631564577:web:3c1ca84763bfb498e80e5c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
   <script src="script.js"></script>
+
+  <!-- Visitor Login Logic -->
+  <script>
+  (function() {
+    const loginBtn = document.getElementById('loginBtn');
+    const loginModal = document.getElementById('loginModal');
+    const loginModalClose = document.getElementById('loginModalClose');
+    const loginForm = document.getElementById('loginForm');
+
+    function checkLoggedIn() {
+      const visitor = localStorage.getItem('visitor');
+      if (visitor) {
+        const data = JSON.parse(visitor);
+        loginBtn.textContent = data.email;
+        loginBtn.title = data.email;
+      }
+    }
+
+    checkLoggedIn();
+
+    loginBtn.addEventListener('click', () => {
+      const visitor = localStorage.getItem('visitor');
+      if (visitor) return;
+      loginModal.classList.add('login-modal--active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    loginModalClose.addEventListener('click', () => {
+      loginModal.classList.remove('login-modal--active');
+      document.body.style.overflow = '';
+    });
+
+    loginModal.addEventListener('click', (e) => {
+      if (e.target === loginModal) {
+        loginModal.classList.remove('login-modal--active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const phone = document.getElementById('loginPhone').value.trim();
+
+      if (!email || !phone) return;
+
+      const submitBtn = loginForm.querySelector('button[type="submit"]');
+      submitBtn.textContent = 'Saving...';
+      submitBtn.disabled = true;
+
+      try {
+        await db.collection('visitors').add({
+          email: email,
+          phone: phone,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        localStorage.setItem('visitor', JSON.stringify({ email, phone }));
+        loginBtn.textContent = email;
+        loginBtn.title = email;
+        loginModal.classList.remove('login-modal--active');
+        document.body.style.overflow = '';
+      } catch (err) {
+        console.error('Error saving visitor:', err);
+        alert('Something went wrong. Please try again.');
+      } finally {
+        submitBtn.textContent = 'Continue';
+        submitBtn.disabled = false;
+      }
+    });
+  })();
+  </script>
 </body>
 </html>
